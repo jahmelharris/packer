@@ -84,9 +84,7 @@ lint: install-lint-deps ## Lint Go code
 
 ci-lint: install-lint-deps ## On ci only lint newly added Go source files
 	@echo "==> Running linter on newly added Go source files..."
-	GO111MODULE=on golangci-lint run --new-from-rev=`git merge-base master HEAD` ./...
-
-
+	git diff --name-status $(shell git merge-base origin/master HEAD)...HEAD | grep '^A.*\.go$$' | awk '{print $$2}' | GO111MODULE=on xargs -n1 golangci-lint run -c $(CURDIR)/.golangci.yml
 fmt: ## Format Go code
 	@go fmt ./...
 
